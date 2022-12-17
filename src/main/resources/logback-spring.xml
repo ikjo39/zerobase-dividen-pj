@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <!-- 변수값 설정 (로그가 쌓일 경로) -->
+  <property name="LOG_DIR" value="./"/>
+  <property name="LOG_FILE_NAME" value="mylog"/>
+
+  <!-- Console Appender  콘솔에 출력 -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- 출력 패턴 설정 -->
+    <encoder>
+      <pattern> %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta(%-4relative) --- [ %thread ] %cyan(logger{20}) : %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- File Appender  파일에 저장 Rolling=가장 오래된 파일 삭제-->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 파일명과 경로 설정 -->
+    <file>${LOG_DIR}/${LOG_FILE_NAME}.log</file>
+    <!-- Rolling 정책-->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- .gz, .zip 등을 넣으면 자동 일자별 로그파일 압축 -->
+      <fileNamePattern>${LOG_DIR}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}_%i.log.gz</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- 파일당 최고 용량 -->
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <!-- 일자별 로그파일 최대 보관주기(~일), 해당 설정된 이상한 파일은 자동으로 제거 -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.springframework" level="info"/>
+  <logger name="org.hibernate" level="info"/>
+
+  <root level="info">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>
+
+  <!-- 로그백  -->
